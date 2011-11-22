@@ -1,0 +1,9 @@
+C:\Source\Projects\NHibernate.Caches.AppFabric\NHibernate.Caches.AppFabric\bin\Debug\NHibernate.Caches.AppFabric.dll
+C:\Source\Projects\NHibernate.Caches.AppFabric\NHibernate.Caches.AppFabric\bin\Debug\NHibernate.Caches.AppFabric.pdb
+C:\Source\Projects\NHibernate.Caches.AppFabric\NHibernate.Caches.AppFabric\bin\Debug\Iesi.Collections.dll
+C:\Source\Projects\NHibernate.Caches.AppFabric\NHibernate.Caches.AppFabric\bin\Debug\NHibernate.dll
+C:\Source\Projects\NHibernate.Caches.AppFabric\NHibernate.Caches.AppFabric\bin\Debug\Iesi.Collections.xml
+C:\Source\Projects\NHibernate.Caches.AppFabric\NHibernate.Caches.AppFabric\bin\Debug\NHibernate.xml
+C:\Source\Projects\NHibernate.Caches.AppFabric\NHibernate.Caches.AppFabric\obj\Debug\ResolveAssemblyReference.cache
+C:\Source\Projects\NHibernate.Caches.AppFabric\NHibernate.Caches.AppFabric\obj\Debug\NHibernate.Caches.AppFabric.dll
+C:\Source\Projects\NHibernate.Caches.AppFabric\NHibernate.Caches.AppFabric\obj\Debug\NHibernate.Caches.AppFabric.pdb
