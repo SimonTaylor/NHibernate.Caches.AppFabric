@@ -10,12 +10,12 @@ namespace NHibernate.Caches.AppFabric
     {
         public ICache BuildCache(string regionName, IDictionary<string, string> properties)
         {
-            throw new NotImplementedException();
+            return new AppFabricCacheAdapter();
         }
 
         public long NextTimestamp()
         {
-            throw new NotImplementedException();
+            return Timestamper.Next();
         }
 
         public void Start(IDictionary<string, string> properties)
