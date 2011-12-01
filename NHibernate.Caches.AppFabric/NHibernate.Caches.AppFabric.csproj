@@ -70,6 +70,7 @@
     <Compile Include="AppFabricCacheAdapterFactory.cs" />
     <Compile Include="AppFabricProvider.cs" />
     <Compile Include="AppFabricCacheAdapterType.cs" />
+    <Compile Include="AppFabricConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

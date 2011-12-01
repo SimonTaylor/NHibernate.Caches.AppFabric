@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using NHibernate.Caches.AppFabric.Adapters;
 
 namespace NHibernate.Caches.AppFabric
 {
@@ -9,13 +10,29 @@ namespace NHibernate.Caches.AppFabric
     {
         private static AppFabricCacheAdapterType DefaultAdapterType = AppFabricCacheAdapterType.Region;
 
+        /// <summary>
+        /// Factory method to create an app fabric cache adapter.
+        /// </summary>
+        /// <param name="regionName">The name of the AppFabric cache or region etc that the adapter will interface with.</param>
+        /// <param name="properties">NHibernate configuration properties, which will optionally include the type of adapter 
+        /// to create.</param>
+        /// <returns>An AppFabric cache adapter.</returns>
         public static AppFabricCacheAdapter Create(string regionName, IDictionary<string, string> properties)
         {
-            AppFabricCacheAdapterType type = DefaultAdapterType;
+            switch (GetAdapterTypeOrDefault(properties))
+            {
+                case AppFabricCacheAdapterType.Named:
+                    return new AppFabricCacheNamedAdapter(regionName, properties);
 
-            // Need to parse the type and then instantiate one of the adapter types.
-            // Need to log errors etc if they occur, using standard NHibernate logging
-            
+                case AppFabricCacheAdapterType.Region:
+                    return new AppFabricCacheRegionAdapter(regionName, properties);
+
+                case AppFabricCacheAdapterType.Tag:
+                    return new AppFabricCacheTagAdapter(regionName, properties);
+
+                default:
+                    throw new HibernateException("Unknown AppFabric cache adapter type");
+            }
         }
 
         /// <summary>
@@ -28,10 +45,14 @@ namespace NHibernate.Caches.AppFabric
         {
             AppFabricCacheAdapterType type = DefaultAdapterType;
 
-            if (properties.ContainsKey("Need to put properties in a constants file instead"))
+            if (properties.ContainsKey(AppFabricConfig.NamedCacheType))
             {
-                if (!Enum.TryParse<AppFabricCacheAdapterType>(properties["TODO"], out type))
-                    throw new NHibernate.HibernateException("TODO include key and possible values in error");
+                if (!Enum.TryParse<AppFabricCacheAdapterType>(properties[AppFabricConfig.NamedCacheType], out type))
+                {
+                    throw new HibernateException(string.Format("Invalid AppFabric provider config. If set, {0} must be set to {1}, {2} or {3}",
+                                                               AppFabricConfig.NamedCacheType, AppFabricCacheAdapterType.Named, 
+                                                               AppFabricCacheAdapterType.Region, AppFabricCacheAdapterType.Tag));
+                }
             }
             return type;
         }

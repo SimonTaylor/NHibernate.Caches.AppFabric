@@ -10,10 +10,6 @@ namespace NHibernate.Caches.AppFabric
     {
         #region Constants
 
-        private const string TimeoutSetting = "cache.app-fabric.timeout";
-        private const string NamedCacheType = "cache.app-fabric.cache-type";
-
-
         private int DefaultTimeout = 30;
 
         #endregion
@@ -27,21 +23,11 @@ namespace NHibernate.Caches.AppFabric
 
             // TODO: need to tidy this up for other settings, need to handle parse errors ??? default and log ????
             // Is 30 an OK default setting?
-            if (properties.ContainsKey(TimeoutSetting))
-                Timeout = Int32.Parse(properties[TimeoutSetting]);
+            if (properties.ContainsKey(AppFabricConfig.TimeoutSetting))
+                Timeout = Int32.Parse(properties[AppFabricConfig.TimeoutSetting]);
             else
             {
                 Timeout = DefaultTimeout;
-            }
-
-            // Maybe the properties should be passed to the factory and then when the type is parsed, 
-            // the rest of the properties can be passed to the constructor, along with region name
-            // The parsing of the properties can go in the constructor of the abstract base class
-            if (properties.ContainsKey(NamedCacheType))
-                Enum.Parse(typeof(AppFabricAdapterType), properties[NamedCacheType]); // Pass to factory
-            else
-            {
-                // Just do the default
             }
 
             // Cache client config should have default versions and then specific ones. i.e. Everything could use the
@@ -53,6 +39,7 @@ namespace NHibernate.Caches.AppFabric
             // things - need to think of a name for them.
 
             // TODO: All of the classes etc need file headers
+            // TODO: Need to add in logging as well
         }
 
         #endregion
@@ -65,7 +52,7 @@ namespace NHibernate.Caches.AppFabric
             private set;
         }
 
-        public int Timeout
+        public virtual int Timeout
         {
             get;
             private set;
@@ -75,45 +62,24 @@ namespace NHibernate.Caches.AppFabric
 
         #region Methods
 
-        public void Clear()
+        public abstract void Clear();
+
+        public abstract void Destroy();
+
+        public abstract object Get(object key);
+
+        public abstract void Lock(object key);
+
+        public virtual long NextTimestamp()
         {
-            throw new NotImplementedException();
+            return Timestamper.Next();
         }
 
-        public void Destroy()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void Put(object key, object value);
 
-        public object Get(object key)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void Remove(object key);
 
-        public void Lock(object key)
-        {
-            throw new NotImplementedException();
-        }
-
-        public long NextTimestamp()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Put(object key, object value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Remove(object key)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Unlock(object key)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void Unlock(object key);
 
         #endregion
     }

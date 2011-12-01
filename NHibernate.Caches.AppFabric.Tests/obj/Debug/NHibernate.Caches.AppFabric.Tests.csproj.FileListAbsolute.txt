@@ -7,3 +7,4 @@ C:\Source\Projects\NHibernate.Caches.AppFabric\NHibernate.Caches.AppFabric.Tests
 C:\Source\Projects\NHibernate.Caches.AppFabric\NHibernate.Caches.AppFabric.Tests\obj\Debug\ResolveAssemblyReference.cache
 C:\Source\Projects\NHibernate.Caches.AppFabric\NHibernate.Caches.AppFabric.Tests\obj\Debug\NHibernate.Caches.AppFabric.Tests.dll
 C:\Source\Projects\NHibernate.Caches.AppFabric\NHibernate.Caches.AppFabric.Tests\obj\Debug\NHibernate.Caches.AppFabric.Tests.pdb
+C:\Source\Projects\NHibernate.Caches.AppFabric\NHibernate.Caches.AppFabric.Tests\bin\Debug\System.Data.SqlServerCe.dll

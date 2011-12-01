@@ -10,7 +10,7 @@ namespace NHibernate.Caches.AppFabric
     {
         public ICache BuildCache(string regionName, IDictionary<string, string> properties)
         {
-            return new AppFabricCacheAdapter();
+            return AppFabricCacheAdapterFactory.Create(regionName, properties);
         }
 
         public long NextTimestamp()
