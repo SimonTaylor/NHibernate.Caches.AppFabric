@@ -8,7 +8,13 @@ namespace NHibernate.Caches.AppFabric
 {
     public class AppFabricCacheAdapterFactory
     {
+        #region Class variables
+
         private static AppFabricCacheAdapterType DefaultAdapterType = AppFabricCacheAdapterType.Region;
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Factory method to create an app fabric cache adapter.
@@ -56,5 +62,7 @@ namespace NHibernate.Caches.AppFabric
             }
             return type;
         }
+
+        #endregion
     }
 }

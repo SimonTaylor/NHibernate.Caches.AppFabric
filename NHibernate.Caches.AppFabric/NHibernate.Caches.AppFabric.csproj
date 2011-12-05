@@ -68,9 +68,11 @@
     <Compile Include="Adapters\AppFabricCacheTagAdapter.cs" />
     <Compile Include="AppFabricCacheAdapter.cs" />
     <Compile Include="AppFabricCacheAdapterFactory.cs" />
+    <Compile Include="AppFabricCacheFactory.cs" />
     <Compile Include="AppFabricProvider.cs" />
     <Compile Include="AppFabricCacheAdapterType.cs" />
     <Compile Include="AppFabricConfig.cs" />
+    <Compile Include="IAppFabricCacheFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

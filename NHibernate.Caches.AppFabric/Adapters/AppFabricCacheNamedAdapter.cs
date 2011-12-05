@@ -9,10 +9,10 @@ namespace NHibernate.Caches.AppFabric.Adapters
     {
         #region Constructor
 
-        public AppFabricCacheNamedAdapter(string regionName, IDictionary<string, string> properties)
+        public AppFabricCacheNamedAdapter(string regionName, 
+                                          IDictionary<string, string> properties)
             : base(regionName, properties)
-        {
-        }
+        { }
 
         #endregion
 
