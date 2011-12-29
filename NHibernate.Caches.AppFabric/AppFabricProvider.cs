@@ -6,6 +6,7 @@ using NHibernate.Cache;
 
 namespace NHibernate.Caches.AppFabric
 {
+    // TODO: COnvert to .NET 3.5 or have 4 and 3.5 builds?
     public class AppFabricProvider : ICacheProvider
     {
         public ICache BuildCache(string regionName, IDictionary<string, string> properties)
@@ -20,12 +21,10 @@ namespace NHibernate.Caches.AppFabric
 
         public void Start(IDictionary<string, string> properties)
         {
-            throw new NotImplementedException();
         }
 
         public void Stop()
         {
-            throw new NotImplementedException();
         }
     }
 }

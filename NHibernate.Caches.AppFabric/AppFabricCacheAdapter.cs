@@ -17,13 +17,7 @@ namespace NHibernate.Caches.AppFabric
 
         #region Constructor
 
-        public AppFabricCacheAdapter(string regionName,
-                                     IDictionary<string, string> properties)
-            : this(regionName, new AppFabricCacheFactory(properties), properties)
-        { }
-
         public AppFabricCacheAdapter(string regionName, 
-                                     IAppFabricCacheFactory cacheFactory,
                                      IDictionary<string, string> properties)
         {
             // TODO: I don't think this can be null, should probably check though - this is the name of the cache
@@ -38,7 +32,6 @@ namespace NHibernate.Caches.AppFabric
             {
                 Timeout = DefaultTimeout;
             }
-            Cache = cacheFactory.GetCache(regionName);
 
             // Cache client config should have default versions and then specific ones. i.e. Everything could use the
             // one that is configured through web.config except any that are explictly set where the name of the client
@@ -63,12 +56,6 @@ namespace NHibernate.Caches.AppFabric
         }
 
         public virtual int Timeout
-        {
-            get;
-            private set;
-        }
-
-        protected internal DataCache Cache
         {
             get;
             private set;

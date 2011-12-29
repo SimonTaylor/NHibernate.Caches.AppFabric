@@ -8,9 +8,16 @@ namespace NHibernate.Caches.AppFabric.Adapters
 {
     public class AppFabricCacheRegionAdapter : AppFabricCacheAdapter
     {
-        #region Member variable
+        #region Constants
 
-        private readonly string _regionName;
+        private const string DefaultCacheName = "nhibernate";
+
+        #endregion
+
+        #region Member variables
+
+        private readonly string    _regionName;
+        private readonly DataCache _cache;
 
         // TODO: This needs to be moved into the distributed cache
         private IDictionary<string, DataCacheLockHandle> _locks = new Dictionary<string,DataCacheLockHandle>();
@@ -19,21 +26,30 @@ namespace NHibernate.Caches.AppFabric.Adapters
 
         #region Constructor
 
+        public AppFabricCacheRegionAdapter(string regionName, IDictionary<string, string> properties)
+            : this(regionName, new AppFabricCacheFactory(properties), properties)
+        { }
+
         public AppFabricCacheRegionAdapter(string regionName,
+                                           IAppFabricCacheFactory cacheFactory,
                                            IDictionary<string, string> properties)
             : base(regionName, properties)
         {
             // TODO: Need to be able to recreate this if the cache cluster is restarted - think this will require specific
             // code in each method
-            _regionName = regionName;
+            _regionName = regionName.GetHashCode().ToString();
+
+            // TODO: Get the cache name from the config if it exists
+            _cache = cacheFactory.GetCache(DefaultCacheName, true);
 
             try
             {
-                Cache.CreateRegion(regionName);
+                _cache.CreateRegion(_regionName);
             }
             catch (DataCacheException)
             {
                 // TODO: Log it and swallow it if it is because it already exists?
+                // TODO: A temporary failure keeps occurring here :O(
                 throw;
             }
         }
@@ -44,7 +60,7 @@ namespace NHibernate.Caches.AppFabric.Adapters
 
         public override void Clear()
         {
-            Cache.ClearRegion(_regionName);
+            _cache.ClearRegion(_regionName);
         }
 
         public override void Destroy()
@@ -57,7 +73,7 @@ namespace NHibernate.Caches.AppFabric.Adapters
             if (key == null)
                 return null;
 
-            return Cache.Get(key.ToString(), _regionName);
+            return _cache.Get(key.ToString(), _regionName);
         }
 
         public override void Lock(object key)
@@ -66,7 +82,7 @@ namespace NHibernate.Caches.AppFabric.Adapters
 
             try
             {
-                Cache.GetAndLock(key.ToString(), TimeSpan.FromMilliseconds(Timeout), out lockHandle, _regionName);
+                _cache.GetAndLock(key.ToString(), TimeSpan.FromMilliseconds(Timeout), out lockHandle, _regionName);
                 _locks.Add(key.ToString(), lockHandle);
             }
             catch (DataCacheException) 
@@ -83,9 +99,9 @@ namespace NHibernate.Caches.AppFabric.Adapters
             if (value == null)
                 throw new ArgumentNullException("value", "null value not allowed");
 
-            // TODO: Should we check for locks?
+            // TODO: Should we check for locks? If we check there will then be no need to keep track of locks separately
 
-            Cache.Put(key.ToString(), value, _regionName);
+            _cache.Put(key.ToString(), value, _regionName);
         }
 
         public override void Remove(object key)
@@ -95,7 +111,7 @@ namespace NHibernate.Caches.AppFabric.Adapters
 
             if (Get(key.ToString()) != null)
             {
-                Cache.Remove(_regionName, key.ToString());
+                _cache.Remove(_regionName, key.ToString());
             }
         }
 
@@ -105,7 +121,7 @@ namespace NHibernate.Caches.AppFabric.Adapters
             {
                 if (_locks.ContainsKey(key.ToString()))
                 {
-                    Cache.Unlock(key.ToString(), _locks[key.ToString()], _regionName);
+                    _cache.Unlock(key.ToString(), _locks[key.ToString()], _regionName);
                     _locks.Remove(key.ToString());
                 }
             }

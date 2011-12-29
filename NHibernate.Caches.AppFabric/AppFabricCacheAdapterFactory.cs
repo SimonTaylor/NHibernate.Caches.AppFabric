@@ -6,7 +6,7 @@ using NHibernate.Caches.AppFabric.Adapters;
 
 namespace NHibernate.Caches.AppFabric
 {
-    public class AppFabricCacheAdapterFactory
+    public static class AppFabricCacheAdapterFactory
     {
         #region Class variables
 
