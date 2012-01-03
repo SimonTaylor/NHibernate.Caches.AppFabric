@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.ApplicationServer.Caching;
+using NHibernate.Cache;
 
 namespace NHibernate.Caches.AppFabric.Adapters
 {
@@ -16,11 +17,11 @@ namespace NHibernate.Caches.AppFabric.Adapters
 
         #region Member variables
 
-        private readonly string    _regionName;
+        private readonly string _regionName;
         private readonly DataCache _cache;
 
         // TODO: This needs to be moved into the distributed cache
-        private IDictionary<string, DataCacheLockHandle> _locks = new Dictionary<string,DataCacheLockHandle>();
+        private IDictionary<string, DataCacheLockHandle> _locks = new Dictionary<string, DataCacheLockHandle>();
 
         #endregion
 
@@ -60,12 +61,28 @@ namespace NHibernate.Caches.AppFabric.Adapters
 
         public override void Clear()
         {
-            _cache.ClearRegion(_regionName);
+            try
+            {
+                _cache.ClearRegion(_regionName);
+            }
+            catch (DataCacheException ex)
+            {
+                // TODO: Do we need to check error numbers?
+                throw new CacheException(ex);
+            }
         }
 
         public override void Destroy()
         {
-            Clear();
+            try
+            {
+                _cache.RemoveRegion(_regionName);
+            }
+            catch (DataCacheException ex)
+            {
+                // TODO: Do we need to do anything more than just swallow?
+                throw new CacheException(ex);
+            }
         }
 
         public override object Get(object key)
@@ -73,7 +90,20 @@ namespace NHibernate.Caches.AppFabric.Adapters
             if (key == null)
                 return null;
 
-            return _cache.Get(key.ToString(), _regionName);
+            // TODO: We at least need to recover if the region has gone missing
+            try
+            {
+                return _cache.Get(key.ToString(), _regionName);
+            }
+            catch (DataCacheException ex)
+            {
+                if (IsSafeToIgnore(ex))
+                    return null;
+                else
+                {
+                    throw new CacheException(ex);
+                }
+            }
         }
 
         public override void Lock(object key)
@@ -85,9 +115,10 @@ namespace NHibernate.Caches.AppFabric.Adapters
                 _cache.GetAndLock(key.ToString(), TimeSpan.FromMilliseconds(Timeout), out lockHandle, _regionName);
                 _locks.Add(key.ToString(), lockHandle);
             }
-            catch (DataCacheException) 
-            { 
-                // TODO: ??? WHat should go here???
+            catch (DataCacheException ex)
+            {
+                // TODO: ??? WHat should go here??? Do we need to check error codes?
+                throw new CacheException(ex);
             }
         }
 
@@ -99,9 +130,19 @@ namespace NHibernate.Caches.AppFabric.Adapters
             if (value == null)
                 throw new ArgumentNullException("value", "null value not allowed");
 
-            // TODO: Should we check for locks? If we check there will then be no need to keep track of locks separately
+            DataCacheLockHandle lockHandle = null;
 
-            _cache.Put(key.ToString(), value, _regionName);
+            try
+            {
+                _cache.GetAndLock(key.ToString(), TimeSpan.FromMilliseconds(Timeout), out lockHandle, _regionName, true);
+                _cache.Put(key.ToString(), value, _regionName);
+            }
+            catch (DataCacheException ex)
+            {
+                // TODO: Need top check error codes for things like region not existing. Should it throw an exception though?
+                if (!IsSafeToIgnore(ex))
+                    throw new CacheException(ex);
+            }
         }
 
         public override void Remove(object key)
@@ -109,9 +150,18 @@ namespace NHibernate.Caches.AppFabric.Adapters
             if (key == null)
                 throw new ArgumentNullException("key");
 
-            if (Get(key.ToString()) != null)
+            try
             {
-                _cache.Remove(_regionName, key.ToString());
+                if (Get(key.ToString()) != null)
+                {
+                    _cache.Remove(_regionName, key.ToString());
+                }
+            }
+            catch (DataCacheException ex)
+            {
+                // TODO: SHould anything else happen here?
+                if (!IsSafeToIgnore(ex))
+                    throw new CacheException(ex);
             }
         }
 
@@ -125,10 +175,16 @@ namespace NHibernate.Caches.AppFabric.Adapters
                     _locks.Remove(key.ToString());
                 }
             }
-            catch (DataCacheException) 
-            { 
+            catch (DataCacheException ex)
+            {
                 // TODO: ?????
+                throw new CacheException(ex);
             }
+        }
+
+        private bool IsSafeToIgnore(DataCacheException ex)
+        {
+            return ex.ErrorCode == DataCacheErrorCode.ConnectionTerminated || ex.ErrorCode == DataCacheErrorCode.RetryLater || ex.ErrorCode == DataCacheErrorCode.Timeout;
         }
 
         #endregion
