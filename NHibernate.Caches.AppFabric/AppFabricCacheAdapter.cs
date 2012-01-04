@@ -16,13 +16,6 @@ namespace NHibernate.Caches.AppFabric
     /// </summary>
     public abstract class AppFabricCacheAdapter : ICache
     {
-        #region Constants
-
-        private int DefaultTimeout = 30000;
-        private string LocksRegion = "locks";
-
-        #endregion
-
         #region Member variables
 
         private readonly ISerializationProvider _serializationProvider;
@@ -34,45 +27,22 @@ namespace NHibernate.Caches.AppFabric
 
         #region Constructor
 
-        public AppFabricCacheAdapter(string regionName, 
-                                     IDictionary<string, string> properties)
+        public AppFabricCacheAdapter(string regionName)
         {
-            // TODO: I don't think this can be null, should probably check though - this is the name of the cache
             RegionName = regionName;
 
-            // TODO: need to tidy this up for other settings, need to handle parse errors ??? default and log ????
-            // Is 30 an OK default setting?
-            if (properties.ContainsKey(AppFabricConfig.TimeoutSetting))
-                Timeout = Int32.Parse(properties[AppFabricConfig.TimeoutSetting]);
-            else
-            {
-                Timeout = DefaultTimeout;
-            }
-
-            if (properties.ContainsKey(AppFabricConfig.Serialization))
-                _serializationProvider = Activator.CreateInstance(ReflectHelper.ClassForName(properties[AppFabricConfig.Serialization])) as ISerializationProvider;
+            if (!string.IsNullOrWhiteSpace(AppFabricProviderSettings.Settings.SerializationProvider))
+                _serializationProvider = Activator.CreateInstance(ReflectHelper.ClassForName(AppFabricProviderSettings.Settings.SerializationProvider)) as ISerializationProvider;
             else
             {
                 _serializationProvider = null;
             }
-
-            // Cache client config should have default versions and then specific ones. i.e. Everything could use the
-            // one that is configured through web.config except any that are explictly set where the name of the client
-            // matches the region name
-            // Creating the factories are expensive, so I should cache them in a static dictionary which I can key with
-            // the region name
-            // Cache type will be Tag, Region, Named - that will be passed to a factory that will create my different
-            // things - need to think of a name for them.
-
             // TODO: All of the classes etc need file headers
             // TODO: Need to add in logging as well
-            IAppFabricCacheFactory factory = new AppFabricCacheFactory(properties);
+            _lockHandles = new Dictionary<string, DataCacheLockHandle>();
+            _locksCache  = AppFabricCacheFactory.Instance.GetCache(LocksRegionName, true);
 
-            Cache = GetCache(factory, properties);
-
-            // TODO: Make locks region / named cache configurable
-            _locksCache = factory.GetCache(LocksRegion, true);
-            _lockHandles      = new Dictionary<string, DataCacheLockHandle>();
+            Cache = GetCache(AppFabricCacheFactory.Instance);
         }
 
         #endregion
@@ -82,6 +52,14 @@ namespace NHibernate.Caches.AppFabric
         protected internal abstract string AppFabricRegionName
         {
             get;
+        }
+
+        protected internal virtual string LocksRegionName
+        {
+            get
+            {
+                return AppFabricProviderSettings.Settings.LocksRegionName;
+            }
         }
 
         protected internal virtual DataCache Cache
@@ -98,15 +76,17 @@ namespace NHibernate.Caches.AppFabric
 
         public virtual int Timeout
         {
-            get;
-            private set;
+            get
+            {
+                return AppFabricProviderSettings.Settings.LockTimeout;
+            }
         }
 
         #endregion
 
         #region Methods
 
-        protected internal abstract DataCache GetCache(IAppFabricCacheFactory cacheFactory, IDictionary<string, string> properties);
+        protected internal abstract DataCache GetCache(IAppFabricCacheFactory cacheFactory);
 
         public virtual void Clear()
         {
@@ -170,7 +150,7 @@ namespace NHibernate.Caches.AppFabric
 
             try
             {
-                _locksCache.GetAndLock(key.ToString(), TimeSpan.FromMilliseconds(Timeout), out lockHandle, LocksRegion, true);
+                _locksCache.GetAndLock(key.ToString(), TimeSpan.FromMilliseconds(Timeout), out lockHandle, LocksRegionName, true);
 
                 lock (_lockHandles)
                 {
@@ -251,7 +231,7 @@ namespace NHibernate.Caches.AppFabric
             {
                 if (_lockHandles.ContainsKey(key.ToString()))
                 {
-                    _locksCache.Unlock(key.ToString(), _lockHandles[key.ToString()], LocksRegion);
+                    _locksCache.Unlock(key.ToString(), _lockHandles[key.ToString()], LocksRegionName);
 
                     lock (_lockHandles)
                     {
@@ -273,7 +253,7 @@ namespace NHibernate.Caches.AppFabric
 
         private void CreateLocksRegion(Action<bool> callback)
         {
-            CreateRegion(_locksCache, LocksRegion, callback);
+            CreateRegion(_locksCache, LocksRegionName, callback);
         }
 
         private void CreateAppFabricRegion(Action<bool> callback)

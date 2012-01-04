@@ -8,7 +8,13 @@ namespace NHibernate.Caches.AppFabric
 {
     public class AppFabricCacheFactory : IAppFabricCacheFactory
     {
-        #region Member variables    
+        #region Class variables
+
+        private static readonly Lazy<AppFabricCacheFactory> _lazy = new Lazy<AppFabricCacheFactory>(() => new AppFabricCacheFactory());
+
+        #endregion
+
+        #region Member variables
 
         private DataCacheFactory _cacheCluster;
 
@@ -16,11 +22,21 @@ namespace NHibernate.Caches.AppFabric
 
         #region Constructor
 
-        public AppFabricCacheFactory(IDictionary<string, string> properties)
+        private AppFabricCacheFactory()
         {
-            // TODO: SHould this be static - maybe doesn't matter if it gets added to a static dictionary?
-            // Or maybe this class should be a singleton? And what about disposing of it?
             _cacheCluster = new DataCacheFactory();
+        }
+
+        #endregion
+
+        #region Properties
+
+        public static AppFabricCacheFactory Instance
+        {
+            get
+            {
+                return _lazy.Value;
+            }
         }
 
         #endregion

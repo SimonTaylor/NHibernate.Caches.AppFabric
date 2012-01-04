@@ -9,12 +9,6 @@ namespace NHibernate.Caches.AppFabric.Adapters
 {
     public class AppFabricCacheRegionAdapter : AppFabricCacheAdapter
     {
-        #region Constants
-
-        private const string DefaultCacheName = "nhibernate";
-
-        #endregion
-
         #region Member variables
 
         private readonly string _regionName;
@@ -23,9 +17,8 @@ namespace NHibernate.Caches.AppFabric.Adapters
 
         #region Constructor
 
-        public AppFabricCacheRegionAdapter(string regionName,
-                                           IDictionary<string, string> properties)
-            : base(regionName, properties)
+        public AppFabricCacheRegionAdapter(string regionName)
+            : base(regionName)
         {
             _regionName = regionName.GetHashCode().ToString();
         }
@@ -46,10 +39,9 @@ namespace NHibernate.Caches.AppFabric.Adapters
 
         #region Methods
 
-        protected internal override DataCache GetCache(IAppFabricCacheFactory cacheFactory, IDictionary<string, string> properties)
+        protected internal override DataCache GetCache(IAppFabricCacheFactory cacheFactory)
         {
-            // TODO: Get the cache name from the config if it exists - is extra error handling required here?
-            return cacheFactory.GetCache(DefaultCacheName, true);
+            return cacheFactory.GetCache(AppFabricProviderSettings.Settings.RegionCacheTypeCacheName, true);
         }
 
         #endregion

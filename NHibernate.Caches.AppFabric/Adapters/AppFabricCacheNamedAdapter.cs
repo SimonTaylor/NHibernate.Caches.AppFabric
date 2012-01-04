@@ -9,19 +9,12 @@ namespace NHibernate.Caches.AppFabric.Adapters
 {
     public class AppFabricCacheNamedAdapter : AppFabricCacheAdapter
     {
-        #region Constants
-
-        private const string DefaultRegionName = "nhibernate";
-
-        #endregion
 
         #region Constructor
 
-        public AppFabricCacheNamedAdapter(string regionName,
-                                          IDictionary<string, string> properties)
-            : base(regionName, properties)
+        public AppFabricCacheNamedAdapter(string regionName)
+            : base(regionName)
         {
-            // TODO: Is extra error handling required here?
         }
 
         #endregion
@@ -32,8 +25,7 @@ namespace NHibernate.Caches.AppFabric.Adapters
         {
             get
             {
-                // Need to be able to get this from config
-                return DefaultRegionName;
+                return AppFabricProviderSettings.Settings.NamedCacheTypeRegionName;
             }
         }
 
@@ -41,12 +33,9 @@ namespace NHibernate.Caches.AppFabric.Adapters
 
         #region Methods
 
-        protected internal override DataCache GetCache(IAppFabricCacheFactory cacheFactory, IDictionary<string, string> properties)
+        protected internal override DataCache GetCache(IAppFabricCacheFactory cacheFactory)
         {
-            // TODO: Do we need to garuntee the size of the region name?
-            // TODO: When using named caches, do we really want to default to the default cache? Without doing this we have to 
-            // create named caches for the randomly named nhibernate ones. This should probably be configurable
-            return cacheFactory.GetCache(RegionName, true);
+            return cacheFactory.GetCache(RegionName, !AppFabricProviderSettings.Settings.NamedCachesMustExist);
         }
 
         #endregion
