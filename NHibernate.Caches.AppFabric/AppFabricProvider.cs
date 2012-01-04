@@ -21,6 +21,8 @@ namespace NHibernate.Caches.AppFabric
 
         public void Start(IDictionary<string, string> properties)
         {
+            // TODO: Read this from App.config properly
+            properties.Add("cache.app-fabric.cache-type", "Named");
         }
 
         public void Stop()

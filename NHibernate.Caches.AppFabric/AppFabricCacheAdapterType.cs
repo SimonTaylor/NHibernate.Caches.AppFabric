@@ -7,7 +7,6 @@ namespace NHibernate.Caches.AppFabric
 {
     public enum AppFabricCacheAdapterType
     {
-        Tag,
         Region,
         Named
     }

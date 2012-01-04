@@ -65,7 +65,6 @@
   <ItemGroup>
     <Compile Include="Adapters\AppFabricCacheNamedAdapter.cs" />
     <Compile Include="Adapters\AppFabricCacheRegionAdapter.cs" />
-    <Compile Include="Adapters\AppFabricCacheTagAdapter.cs" />
     <Compile Include="AppFabricCacheAdapter.cs" />
     <Compile Include="AppFabricCacheAdapterFactory.cs" />
     <Compile Include="AppFabricCacheFactory.cs" />

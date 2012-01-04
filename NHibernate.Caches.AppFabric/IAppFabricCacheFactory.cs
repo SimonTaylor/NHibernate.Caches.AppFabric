@@ -5,6 +5,6 @@ namespace NHibernate.Caches.AppFabric
 {
     public interface IAppFabricCacheFactory
     {
-        DataCache GetCache(string cacheName, bool useDefault);
+        DataCache GetCache(string cacheName, bool useDefault = false);
     }
 }

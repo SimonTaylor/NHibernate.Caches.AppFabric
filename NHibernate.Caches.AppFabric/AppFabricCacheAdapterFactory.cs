@@ -25,6 +25,9 @@ namespace NHibernate.Caches.AppFabric
         /// <returns>An AppFabric cache adapter.</returns>
         public static AppFabricCacheAdapter Create(string regionName, IDictionary<string, string> properties)
         {
+            if (string.IsNullOrEmpty(regionName))
+                throw new ArgumentNullException("A region name must be specified");
+
             switch (GetAdapterTypeOrDefault(properties))
             {
                 case AppFabricCacheAdapterType.Named:
@@ -32,9 +35,6 @@ namespace NHibernate.Caches.AppFabric
 
                 case AppFabricCacheAdapterType.Region:
                     return new AppFabricCacheRegionAdapter(regionName, properties);
-
-                case AppFabricCacheAdapterType.Tag:
-                    return new AppFabricCacheTagAdapter(regionName, properties);
 
                 default:
                     throw new HibernateException("Unknown AppFabric cache adapter type");
@@ -55,9 +55,9 @@ namespace NHibernate.Caches.AppFabric
             {
                 if (!Enum.TryParse<AppFabricCacheAdapterType>(properties[AppFabricConfig.NamedCacheType], out type))
                 {
-                    throw new HibernateException(string.Format("Invalid AppFabric provider config. If set, {0} must be set to {1}, {2} or {3}",
+                    throw new HibernateException(string.Format("Invalid AppFabric provider config. If set, {0} must be set to {1} or {2}",
                                                                AppFabricConfig.NamedCacheType, AppFabricCacheAdapterType.Named, 
-                                                               AppFabricCacheAdapterType.Region, AppFabricCacheAdapterType.Tag));
+                                                               AppFabricCacheAdapterType.Region));
                 }
             }
             return type;

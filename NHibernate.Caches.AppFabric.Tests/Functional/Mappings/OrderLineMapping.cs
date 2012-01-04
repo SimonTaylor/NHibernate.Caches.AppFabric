@@ -28,7 +28,7 @@ namespace NHibernate.Caches.AppFabric.Tests.Functional.Mappings
             {
                 map.Include(CacheInclude.All);
                 map.Region(VolatileRegion);
-                map.Usage(CacheUsage.NonstrictReadWrite);
+                map.Usage(CacheUsage.ReadWrite);
             });
         }
 

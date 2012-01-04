@@ -27,7 +27,7 @@ namespace NHibernate.Caches.AppFabric
 
         #region Methods
 
-        public DataCache GetCache(string cacheName, bool useDefault)
+        public DataCache GetCache(string cacheName, bool useDefault = false)
         {
             try
             {
@@ -35,8 +35,6 @@ namespace NHibernate.Caches.AppFabric
             }
             catch (DataCacheException ex)
             {
-                // TODO: Whether this is done is dependent upong the implementation of the adapter so should be determined
-                // by a flag passed in
                 if (ex.ErrorCode == DataCacheErrorCode.NamedCacheDoesNotExist && useDefault)
                     return _cacheCluster.GetDefaultCache();
 
