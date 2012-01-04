@@ -2,4 +2,4 @@ This project is an NHibernate second-level cache provider for App Fabric. This p
 
 In addition to being actively maintained, this provider also provides a number of additional features in addition to the basic implementation provided by the velocity version.
 
-More information can be found in the following stack overflow question http://stackoverflow.com/questions/3233792/appfabric-could-not-contact-the-cache-service and also http://www.sharpcoder.co.uk.
+More information can be found in the following stack overflow question http://stackoverflow.com/questions/3233792/appfabric-could-not-contact-the-cache-service and also http://www.sharpcoder.co.uk/post/2012/01/04/NHibernateCachesAppFabric.aspx.
