@@ -72,6 +72,7 @@
     <Compile Include="AppFabricCacheAdapterType.cs" />
     <Compile Include="AppFabricConfig.cs" />
     <Compile Include="IAppFabricCacheFactory.cs" />
+    <Compile Include="ISerializationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

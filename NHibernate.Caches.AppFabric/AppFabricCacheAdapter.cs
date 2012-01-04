@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using NHibernate.Cache;
 using Microsoft.ApplicationServer.Caching;
+using NHibernate.Util;
 
 namespace NHibernate.Caches.AppFabric
 {
@@ -23,6 +24,8 @@ namespace NHibernate.Caches.AppFabric
         #endregion
 
         #region Member variables
+
+        private readonly ISerializationProvider _serializationProvider;
 
         private readonly IDictionary<string, DataCacheLockHandle> _lockHandles;
         private readonly DataCache _locksCache;
@@ -44,6 +47,13 @@ namespace NHibernate.Caches.AppFabric
             else
             {
                 Timeout = DefaultTimeout;
+            }
+
+            if (properties.ContainsKey(AppFabricConfig.Serialization))
+                _serializationProvider = Activator.CreateInstance(ReflectHelper.ClassForName(properties[AppFabricConfig.Serialization])) as ISerializationProvider;
+            else
+            {
+                _serializationProvider = null;
             }
 
             // Cache client config should have default versions and then specific ones. i.e. Everything could use the
@@ -131,7 +141,12 @@ namespace NHibernate.Caches.AppFabric
 
             try
             {
-                return Cache.Get(key.ToString(), AppFabricRegionName);
+                object value = Cache.Get(key.ToString(), AppFabricRegionName);
+
+                if (_serializationProvider != null && value != null)
+                    value = _serializationProvider.Deserialize((byte[])value);
+
+                return value;
             }
             catch (DataCacheException ex)
             {
@@ -195,6 +210,9 @@ namespace NHibernate.Caches.AppFabric
 
             try
             {
+                if (_serializationProvider != null)
+                    value = _serializationProvider.Serialize(value);
+
                 Cache.Put(key.ToString(), value, AppFabricRegionName);
             }
             catch (DataCacheException ex)

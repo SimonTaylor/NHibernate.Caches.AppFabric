@@ -27,8 +27,6 @@ namespace NHibernate.Caches.AppFabric.Adapters
                                            IDictionary<string, string> properties)
             : base(regionName, properties)
         {
-            // TODO: Need to be able to recreate this if the cache cluster is restarted - think this will require specific
-            // code in each method
             _regionName = regionName.GetHashCode().ToString();
         }
 

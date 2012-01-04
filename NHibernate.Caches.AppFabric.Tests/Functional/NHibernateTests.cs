@@ -8,7 +8,6 @@ using NHibernate.Caches.AppFabric.Tests.Functional.Entities;
 
 namespace NHibernate.Caches.AppFabric.Tests.Functional
 {
-    // TODO: Could do with functional tests that hit the other methods, these currently only hit put and get
     [TestFixture]
     public class NHibernateTests
     {

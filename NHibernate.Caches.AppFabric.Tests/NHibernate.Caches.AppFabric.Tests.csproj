@@ -74,6 +74,7 @@
     <Compile Include="Functional\Mappings\OrderMapping.cs" />
     <Compile Include="Functional\Mappings\ProductMapping.cs" />
     <Compile Include="Functional\NHibernateTests.cs" />
+    <Compile Include="Functional\SerializationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

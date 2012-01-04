@@ -23,6 +23,7 @@ namespace NHibernate.Caches.AppFabric
         {
             // TODO: Read this from App.config properly
             properties.Add("cache.app-fabric.cache-type", "Named");
+            properties.Add("cache.app-fabric.serialization_provider", "NHibernate.Caches.AppFabric.Tests.Functional.SerializationProvider, NHibernate.Caches.AppFabric.Tests");
         }
 
         public void Stop()
