@@ -70,14 +70,12 @@ namespace NHibernate.Caches.AppFabric
         {
             RegionName = regionName;
 
-            if (!string.IsNullOrWhiteSpace(AppFabricProviderSettings.Settings.SerializationProvider))
+            if (!string.IsNullOrEmpty(AppFabricProviderSettings.Settings.SerializationProvider))
                 _serializationProvider = Activator.CreateInstance(ReflectHelper.ClassForName(AppFabricProviderSettings.Settings.SerializationProvider)) as ISerializationProvider;
             else
             {
                 _serializationProvider = null;
             }
-            // TODO: All of the classes etc need file headers
-            // TODO: Need to add in logging as well
             _lockHandles = new Dictionary<string, DataCacheLockHandle>();
             _locksCache  = AppFabricCacheFactory.Instance.GetCache(LocksRegionName, true);
 

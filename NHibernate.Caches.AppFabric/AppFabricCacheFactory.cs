@@ -46,7 +46,7 @@ namespace NHibernate.Caches.AppFabric
     {
         #region Class variables
 
-        private static readonly Lazy<AppFabricCacheFactory> _lazy = new Lazy<AppFabricCacheFactory>(() => new AppFabricCacheFactory());
+        private static readonly AppFabricCacheFactory _instance = new AppFabricCacheFactory();
 
         #endregion
 
@@ -57,6 +57,12 @@ namespace NHibernate.Caches.AppFabric
         #endregion
 
         #region Constructor
+
+        // Explicit static constructor to tell C# compiler
+        // not to mark type as beforefieldinit
+        static AppFabricCacheFactory()
+        {
+        }
 
         /// <summary>
         /// A lazy thread-safe singleton implemnatation due to the cost of creating <see cref="DataCacheFactory"/>.
@@ -77,7 +83,7 @@ namespace NHibernate.Caches.AppFabric
         {
             get
             {
-                return _lazy.Value;
+                return _instance;
             }
         }
 
