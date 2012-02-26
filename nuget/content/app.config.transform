@@ -1,0 +1,6 @@
+<configuration>
+  <configSections>
+    <section name="AppFabricProviderSettings" type="NHibernate.Caches.AppFabric.AppFabricProviderSettings, NHibernate.Caches.AppFabric"/>
+  </configSections>
+  <AppFabricProviderSettings CacheType="Named" NamedCacheTypeRegionName="nhibernate" NamedCachesMustExist="false" LockTimeout="30000" LocksRegionName="Locks" />
+</configuration>
