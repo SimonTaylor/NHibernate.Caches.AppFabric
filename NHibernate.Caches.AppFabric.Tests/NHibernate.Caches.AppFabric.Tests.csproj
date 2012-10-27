@@ -78,10 +78,10 @@
     <Compile Include="Functional\NHibernateTests.cs" />
     <Compile Include="Functional\SerializationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Unit\AppFabricCacheAdapterTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Integration\" />
-    <Folder Include="Unit\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

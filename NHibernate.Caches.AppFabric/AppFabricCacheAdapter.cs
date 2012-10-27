@@ -321,7 +321,7 @@ namespace NHibernate.Caches.AppFabric
             {
                 if (Get(key.ToString()) != null)
                 {
-                    Cache.Remove(AppFabricRegionName, key.ToString());
+                    Cache.Remove(key.ToString(),AppFabricRegionName);
                 }
             }
             catch (DataCacheException ex)
