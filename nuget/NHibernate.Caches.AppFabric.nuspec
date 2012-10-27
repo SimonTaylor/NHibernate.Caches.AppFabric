@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>NHibernate.Caches.AppFabric</id>
-    <version>1.0.0.0</version>
+    <version>1.1.0.0</version>
     <title>NHibernate second-level cache provider for App Fabric</title>
     <authors>Simon Taylor</authors>
     <owners>Simon Taylor</owners>
@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/SimonTaylor/NHibernate.Caches.AppFabric</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This project is an NHibernate second-level cache provider for App Fabric. This project is based on the original implementation for the beta versions of AppFabric caching, code named velocity, which can be found at https://github.com/martinernst/NHibernate.Caches/tree/master/Velocity.</description>
-    <releaseNotes />
+    <releaseNotes>Resolves a bug with removing items from the cache, identified and fixed by Raul Alarcon.</releaseNotes>
     <copyright>Copyright 2012</copyright>
     <tags>NHibernate AppFabric</tags>
     <dependencies>
